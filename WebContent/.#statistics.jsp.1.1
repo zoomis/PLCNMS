@@ -1,0 +1,110 @@
+<%@ page language="java" contentType="text/html; charset=EUC-KR"
+	pageEncoding="EUC-KR"
+	import="dpnm.netmsuite.plc.manager.frontend.*,dpnm.netmsuite.util.*,java.util.*"%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
+	<title>fault list page..</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+body {
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+A:link    {text-decoration: none; color:blue;}
+A:active  {text-decoration: none; color:blue;}
+A:visited {text-decoration: none; color:blue;}
+A:hover   {text-decoration: underline; color: red;}
+-->
+</style>
+
+<body background="images/bodybg.gif">
+<%!
+public String time = "";
+public String type = "";
+%>
+<%
+%>			
+<!-- <table width="400" border="1" align="left" cellpadding="0" cellspacing="0" bordercolordark="white" bordercolorlight="black" >  -->
+<table border='0' cellspacing="0"><tr><td><!--//큰 테이블 -->
+<table width="800" border="0" align="left" cellpadding="2" cellspacing="0" bordercolordark="white" bordercolorlight="black" class="homeTableDarkBorderFault" > 
+         <tr class="homeHeader">
+         <td class="boldWhiteText" align='center'>Index</td>
+         <td class="boldWhiteText" align='center'>MACADDR</td>
+         <td class="boldWhiteText" align='center'>TIME</td>
+         <td class="boldWhiteText" align='center'>TYPE</td>
+	</tr>
+	
+	<%IFrontEndManager frontEndManager = FrontEndManager.getInstance();
+		frontEndManager.frontEndManagerstart();
+		String MacAddr = request.getParameter("MacAddr"); //MacAddr 값 넘겨 받는부분.
+			int nodetype = frontEndManager.getNodeType(MacAddr); //nodeType 넘겨 받는 부분.
+
+			//Vector falutList = frontEndManager.getFaultList("111111");  // test
+			Vector faultList = frontEndManager.getFaultList(MacAddr);
+			
+			if (faultList.size() == 0) {
+				out.println("<tr valign='bottom' class='reportsEvenRow'><td colspan='4' align='center'>no error.</td></tr>");
+				out.println("<tr valign='bottom' class='tableOddRow'><td colspan='4'>&nbsp</td></tr>");
+			} else {
+
+				for (int i = 0; i < faultList.size(); i++) {
+					FaultInfo oneFault = (FaultInfo) faultList.elementAt(i);
+
+					String macAddr = oneFault.macAddr;
+					time = oneFault.time;
+					type = oneFault.type;
+
+					if (i % 2 == 0) {
+						out.println("<tr valign='bottom' class='reportsEvenRow'><td>index</td><td>"
+										+ macAddr
+										+ "</td><td>"
+										+ time
+										+ "</td><td>" + type + "</td></tr>");
+					} else if (i % 2 == 1) {
+						out.println("<tr valign='bottom' class='tableOddRow'><td>index</td><td>"
+										+ macAddr
+										+ "</td><td>"
+										+ time
+										+ "</td><td>" + type + "</td></tr>");
+					}
+					//out.println(oneFault.macAddr + " " + oneFault.time + " " + oneFault.type + "<br>");
+				}//for
+
+			}//else
+
+			%>
+		
+</table>
+
+<br>
+<%//ems는 그래프가 없어요..
+			if (nodetype == 0) {
+				//out.println("그래프 없음..");
+			} else {%>
+	</td></tr><tr><td>
+	<table border=1 ' width='350'>
+		<tr>
+			<td><iframe src='InOutPackets.jsp?MacAddr=<%=MacAddr%>'
+				frameborder='1' bordercolor='' marginwidth='' marginheight='' width='400' height='350' aligh=''></iframe></td>
+			<td><iframe src='InOutAcks.jsp' frameborder='1' bordercolor='' marginwidth='' marginheight='' width='400' height='350' aligh=''></iframe>
+			</td>
+		</tr>
+		<tr>
+			<td><iframe src='InOutFails.jsp' frameborder='1' bordercolor='' marginwidth='' marginheight='' width='400' height='350' aligh=''></iframe>
+			</td>
+			<td></td>
+		</tr>
+
+	</table>
+	<!--<jsp:include page="graph_view.jsp"></jsp:include>-->
+	<%}%>
+</td></tr></table><!--//큰 테이블 end-->
+</body>
+</html>

@@ -1,0 +1,140 @@
+<HTML>
+  <HEAD>
+    <TITLE>Tree Script Sample Page</TITLE>
+    <style>
+       A:active{
+    	text-decoration:none;
+    	color:red;
+    	font-size:9pt;
+    	font-family:돋움,Verdana
+	  }
+	  A:visited{
+	    text-decoration:none;
+        color:navy;    
+    	font-size:9pt;
+    	font-family:돋움,Verdana
+	  }
+	  A:link{
+    	text-decoration:none;
+    	color:navy;    
+	    font-size:9pt;
+	    font-family:돋움,Verdana
+	  }	
+	  A:hover{
+	    text-decoration:none;
+	    color:#11aaff;    
+	    font-size:9pt;
+	    font-family:돋움,Verdana
+	  }
+	  TD{
+	    text-decoration:none;
+	    color:#555555;    
+	    font-size:9pt;
+	    font-family:돋움,Verdana
+	  }
+    </style>
+    <SCRIPT SRC="tree.js"></script>  
+    <script>
+        function setLookAndFeel(dir){
+            tree.iconDir="http://pistos.pe.kr/script/images/treeicon/"+dir;
+            tree.loadIcons();
+            tree.repaintAll();
+        }
+        
+        function createNode(){
+            var temp = new TreeNode(document.all("name").value);
+            temp.put("link", document.all("link").value);
+            try{
+            	tree.selectedNode[0].add(temp);
+            	tree.repaint();
+            }catch(e){
+            	alert("생성할 노드의 부모노드를 선택하셔야 합니다.");
+            }
+        } 
+        
+        function deleteNode(){
+            try{
+            	if(tree.selectedNode[0]==tree.root){
+            	    alert("루트 노드는 삭제할 수 없습니다.");
+            	    return;
+            	}
+            	tree.selectedNode[0].removeFromParent();
+            	tree.selectedNode = new Array();
+            	tree.repaint();
+            }catch(e){
+            	alert("삭제할 노드를 선택하셔야 합니다.");
+            }        	
+        }
+    </script>
+  </HEAD>
+  <BODY >
+    <TABLE border=0>
+      <TR>
+        <TD>
+          <TABLE id="sampleTable1" border=0 cellpadding=0 cellspacing=0 ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+          </TABLE>
+        </TD>        
+      </TR>
+      <TR>
+        <TD id="msg">init
+        </TD>
+      </TR>
+      <TR>      
+        <TD>
+          <b>룩앤필 변경:</b><BR>
+          <A HREF="javascript:setLookAndFeel('win2000')">[Win2k]</A>
+          <A HREF="javascript:setLookAndFeel('winxp')">[WinXP]</A><BR>
+          <b>노드추가:</b><BR>   
+          Name <input type="text" id="name" name="name" size="10" style="border:solid 1px;height:15"><BR>
+          Link &nbsp;&nbsp;<input type="text" id="link" name="link" size="30" style="border:solid 1px;height:15"><BR>
+          <A HREF="javascript:createNode()">[노드추가]</A><BR>
+          <b>노드삭제:</b><BR>
+          <A HREF="javascript:deleteNode()">[선택한 노드삭제]</A>          
+        </TD>
+      </TR>
+    </TABLE>    
+    <SCRIPT>
+      
+      var tree = new Tree("sampleTable1","ROOT");
+      tree.iconDir="http://pistos.pe.kr/script/images/treeicon/win2000";
+      tree.selectionMode = tree.DISCONTIGUOUS_TREE_SELECTION; 
+      tree.treeSelectionListener = function(node, event){
+          this.selectNode(node, event);
+          document.all("msg").innerText = tree.selectedNode[0].get("link")+" selected";
+      }
+      
+     
+var node1 = new TreeNode("00:00:00:00:00");    
+     
+var node2 = new TreeNode("00:00:00:00:01"); node1.add(node2); 
+var node5 = new TreeNode("00:00:00:01:01"); node2.add(node5); 
+var node7 = new TreeNode("00:00:00:01:11"); node5.add(node7); 
+var node8 = new TreeNode("00:00:00:01:12"); node5.add(node8); 
+var node6 = new TreeNode("00:00:00:01:02"); node2.add(node6); 
+var node9 = new TreeNode("00:30:00:01:03"); node2.add(node9); 
+var node10 = new TreeNode("00:30:00:01:04"); node2.add(node10); 
+var node3 = new TreeNode("00:00:00:00:02"); node1.add(node3); 
+var node4 = new TreeNode("00:00:00:02:01"); node3.add(node4); 
+      
+      tree.root.add(node1);
+      //tree.root.add(node9)
+      //node1.add(node2);
+      //node1.add(node3);
+      
+      //tree.root.add(node4);
+      //node4.add(node5);      
+      //node2.add(node6);
+      //node2.add(node7);      
+      //node2.remove(node7);
+      //tree.moveNode( node2, node3);      
+      //tree.copyNode( node2, node4);
+      
+
+	
+	
+      tree.expandAll();
+      tree.repaint();
+            
+    </SCRIPT>
+  </BODY>
+</HTML>
